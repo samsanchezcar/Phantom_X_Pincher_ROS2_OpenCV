@@ -94,6 +94,14 @@ def generate_launch_description():
         ],
     )
 
+    # --- NEW: Commander node (your MoveGroupInterface wrapper) ---
+    commander_node = Node(
+        package="phantomx_pincher_commander_cpp",
+        executable="commander",   # this is the target name from CMakeLists
+        name="commander",
+        output="screen",
+    )
+
     # --- MoveIt move_group (without its own ros2_control_node) ---------------
     move_group_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([move_group_launch_path]),
@@ -120,4 +128,5 @@ def generate_launch_description():
         arm_controller_spawner,
         gripper_controller_spawner,
         move_group_launch,
+        commander_node,  # <--- NEW: commander starts as part of bringup
     ])
