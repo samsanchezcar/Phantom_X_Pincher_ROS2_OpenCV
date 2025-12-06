@@ -17,8 +17,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='joho',
-    maintainer_email='johalopezari@unal.edu.co',
+    maintainer='Zoex',
+    maintainer_email='samsanchezca@unal.edu.co',
     description='TODO: Package description',
     license='TODO: License declaration',
     extras_require={
@@ -30,6 +30,10 @@ setup(
         'console_scripts': [
             'template_control_servo = pincher_control.template_control_servo:main',
             'control_servo = pincher_control.control_servo:main',
+            'L5_P1 = pincher_control.LAB5_P1 :main',
+            'terminal_sub = pincher_control.terminal_subscriber :main',
+            'terminal_control = pincher_control.terminal_control :main',
+            'toolbox = pincher_control.toolbox :main',
             'follow_joint_trajectory = pincher_control.follow_joint_trajectory_node:main',
         ],
     },
