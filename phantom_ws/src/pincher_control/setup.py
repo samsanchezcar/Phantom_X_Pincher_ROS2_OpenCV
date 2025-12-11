@@ -35,6 +35,7 @@ setup(
             'terminal_control = pincher_control.terminal_control :main',
             'toolbox = pincher_control.toolbox :main',
             'follow_joint_trajectory = pincher_control.follow_joint_trajectory_node:main',
-        ],
+            'main = pincher_control.main:main',
+        ]
     },
 )
