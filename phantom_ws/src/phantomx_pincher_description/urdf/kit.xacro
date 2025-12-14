@@ -25,6 +25,33 @@
   <material name="blue"><color rgba="0 0 1 1"/></material>
   <material name="purple"><color rgba="0.5 0 0.5 1"/></material>
 
+  <!-- ============================= -->
+  <!-- 📦 Extra STL: canastilla y soporte cámara -->
+  <!-- ============================= -->
+
+  <!-- Pose de la canastilla respecto a baseFija_link (ajústalo si queda corrido) -->
+  <xacro:property name="canastilla_xyz" value="0.155 0 -0.0145" />
+  <xacro:property name="canastilla_rpy" value="0 0 0" />
+
+  <!-- Dimensiones externas (medidas desde tu STL, en metros) -->
+  <xacro:property name="can_outer_x" value="0.600" />   <!-- 600 mm -->
+  <xacro:property name="can_outer_y" value="0.400" />   <!-- 400 mm -->
+  <xacro:property name="can_wall_h" value="0.1855" />   <!-- 185.5 mm -->
+  <xacro:property name="can_wall_t" value="0.02" />     <!-- grosor paredes (2cm) -->
+
+  <!-- Pose del soporte de cámara respecto al robot (26 cm desde el robot).
+       Asumo +X, ajusta si tu "frente" es otro eje -->
+  <xacro:property name="soporte_camara_xyz" value="0.26 0 0.00" />
+  <xacro:property name="soporte_camara_rpy" value="0 0 -${PI/2}" />
+
+  <!-- Colisión del soporte: caja 4cm x 4cm x 30cm (alto) -->
+  <xacro:property name="soporte_col_size" value="0.04 0.04 0.30" />
+  <!-- Centro de la caja: a 15cm en Z para que vaya de z=0 a z=0.30 -->
+  <xacro:property name="soporte_col_xyz" value="0 0 0.15" />
+  <xacro:property name="soporte_col_rpy" value="0 0 0" />
+
+
+
 
   <!-- ============================= -->
   <!-- 🧱 Robot Geometry -->
@@ -268,6 +295,86 @@
     <child link="canecaFrontalIzquierda_link" />
     <origin xyz="0.19397558339 0.09252160722 0.016" rpy="0 0 0" />
   </joint>
+
+
+  <!-- SLT nuevos -->
+  <link name="canastilla_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://phantomx_pincher_description/meshes/STL/canastilla.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="blue" />
+    </visual>
+
+    <!-- Colisión: 4 paredes externas -->
+    <!-- Pared frontal (+Y) -->
+    <collision>
+      <origin xyz="0 ${can_outer_y/2 - can_wall_t/2} ${can_wall_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${can_outer_x} ${can_wall_t} ${can_wall_h}"/>
+      </geometry>
+    </collision>
+
+    <!-- Pared trasera (-Y) -->
+    <collision>
+      <origin xyz="0 -${can_outer_y/2 - can_wall_t/2} ${can_wall_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${can_outer_x} ${can_wall_t} ${can_wall_h}"/>
+      </geometry>
+    </collision>
+
+    <!-- Pared derecha (+X) -->
+    <collision>
+      <origin xyz="${can_outer_x/2 - can_wall_t/2} 0 ${can_wall_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${can_wall_t} ${can_outer_y - 2*can_wall_t} ${can_wall_h}"/>
+      </geometry>
+    </collision>
+
+    <!-- Pared izquierda (-X) -->
+    <collision>
+      <origin xyz="-${can_outer_x/2 - can_wall_t/2} 0 ${can_wall_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${can_wall_t} ${can_outer_y - 2*can_wall_t} ${can_wall_h}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_canastilla_joint" type="fixed">
+    <parent link="baseFija_link" />
+    <child link="canastilla_link" />
+    <origin xyz="${canastilla_xyz}" rpy="${canastilla_rpy}" />
+  </joint>
+
+  
+  <link name="ensambleSoporteCamara_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://phantomx_pincher_description/meshes/STL/ensambleSoporteCamara.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="gray" />
+    </visual>
+
+    <!-- Colisión simplificada -->
+    <collision>
+      <origin xyz="${soporte_col_xyz}" rpy="${soporte_col_rpy}" />
+      <geometry>
+        <box size="${soporte_col_size}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_ensambleSoporteCamara_joint" type="fixed">
+    <parent link="baseFija_link" />
+    <child link="ensambleSoporteCamara_link" />
+    <origin xyz="${soporte_camara_xyz}" rpy="${soporte_camara_rpy}" />
+  </joint>
+
+
 
 
   <!-- ============================= -->
