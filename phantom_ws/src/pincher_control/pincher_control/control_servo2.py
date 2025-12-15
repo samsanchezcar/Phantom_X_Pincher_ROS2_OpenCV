@@ -43,27 +43,39 @@ USE_XL430 = False
 OPENCV_CAMERA_INDEX = 0
 
 # Offset cartesiano (m) - POR AHORA 0, cambia aquí cuando calibres
-OPENCV_OFFSET_X_M = 0.0   # <-- CAMBIAR AQUÍ
+OPENCV_OFFSET_X_M = -0.1   # <-- CAMBIAR AQUÍ
 OPENCV_OFFSET_Y_M = 0.0   # <-- CAMBIAR AQUÍ
 
 # Z fijo para pick (m) - POR AHORA 0, cambia aquí cuando definas altura real
-Z_PICK_M = 0.0            # <-- CAMBIAR AQUÍ
+Z_PICK_M = -0.025            # <-- CAMBIAR AQUÍ
 Z_APPROACH_M = Z_PICK_M + 0.05   # altura de aproximación (recomendado)
 
 # Puntos destino por figura (m) - CONFIGURA AQUÍ tus trayectorias
 DROP_POINTS = {
-    "s": (0.18,  0.08, 0.10),  # <-- CAMBIAR AQUÍ
-    "r": (0.18, -0.08, 0.10),  # <-- CAMBIAR AQUÍ
-    "c": (0.24,  0.00, 0.10),  # <-- CAMBIAR AQUÍ
-    "p": (0.14,  0.00, 0.10),  # <-- CAMBIAR AQUÍ
+    "s": (0.0,  -0.13, 0.02),  # <-- Square -> Red
+    "r": (0.0, 0.13, 0.02),  # <-- Rectangle -> Yellow
+    "c": (-0.2,  0.09, 0.02),  # <-- Circle ->  Green
+    "p": (-0.2,  -0.09, 0.02),  # <-- Pentagon -> Blue
 }
+
+# ============================================================
+#  HOME OPENCV (WAYPOINT INTERMEDIO)
+# ============================================================
+
+
+# Opción 1: HOME en ÁNGULOS (grados) - RECOMENDADO
+HOME_OPENCV_MOTOR_VALUE = [512, 254, 798, 783]   # <-- CAMBIAR AQUÍ
+
+
+HOME_OPENCV_WAIT_S = 1.0                  # espera al llegar al home
+
 
 # Gripper (en grados) - PLACEHOLDER, calibra según tu garra real
 GRIPPER_OPEN_DEG = 0.0     # <-- CAMBIAR AQUÍ
-GRIPPER_CLOSE_DEG = 35.0   # <-- CAMBIAR AQUÍ
+GRIPPER_CLOSE_DEG = 70.0   # <-- CAMBIAR AQUÍ
 
 # Esperas entre movimientos (seg)
-MOVE_WAIT_S = 1.0          # <-- si tu robot tarda más, súbelo
+MOVE_WAIT_S = 1.5          # <-- si tu robot tarda más, súbelo
 
 ######################################################
 L1 = 44.0  / 1000.0
@@ -74,7 +86,7 @@ L4 = 75.3  / 1000.0
 PLANAR_REACH_MAX = L2 + L3 + L4
 PLANAR_REACH_MIN = 0.04
 Z_MAX = L1 + L2 + L3 + L4
-Z_MIN = 0.0
+Z_MIN = -0.03
 
 if USE_XL430:
     PROTOCOL_VERSION = 2.0
@@ -552,6 +564,20 @@ class PincherController(Node):
                 success = False
         
         return success
+    
+    def move_to_motor_value(self, values):
+        """Mueve SOLO los 4 primeros motores a valores DXL especificados"""
+        if len(values) != 4:
+            self.get_logger().error(f'Se esperaban 4 valores, se recibieron {len(values)}')
+            return False
+
+        success = True
+        for i, motor_id in enumerate(self.dxl_ids[:4]):  # más claro que :-1
+            goal = int(np.clip(values[i], 0, DXL_MAX_VALUE))
+            if not self.move_motor(motor_id, goal):
+                success = False
+        return success
+
 
     def move_to_joint_angles(self, q_rad):
         if len(q_rad) != 4:
@@ -669,6 +695,15 @@ class PincherController(Node):
         # Mover todos a 0 grados
         self.move_to_angles_degrees([0, 0, 0, 0, 0])
         self.get_logger().info('Todos los motores movidos a 0°')
+    
+    def go_home_opencv(self):
+        if self.emergency_stop_activated:
+            self.reactivate_torque()
+
+        ok = self.move_to_motor_value(HOME_OPENCV_MOTOR_VALUE)  # <-- aquí
+        return ok
+
+
 
     def emergency_stop(self):
         self.emergency_stop_activated = True
@@ -734,9 +769,8 @@ class PincherController(Node):
     # ============================================================
     def run_pick_place(self, shape_code: str, x_m: float, y_m: float, z_pick_m: float):
         """
-        Rutina bloqueante (úsala en un thread desde la GUI).
-        - NO vuelve a leer cámara.
-        - Usa coordenadas ya guardadas.
+        Rutina:
+        Pick -> subir -> HOME_OPENCV -> Drop -> HOME_OPENCV
         """
         if shape_code not in DROP_POINTS:
             self.get_logger().error(f"Figura '{shape_code}' no tiene DROP_POINT configurado.")
@@ -749,39 +783,70 @@ class PincherController(Node):
             return False
         time.sleep(MOVE_WAIT_S)
 
-        # 2) Bajar a Z_PICK (por ahora 0, cambia Z_PICK_M arriba)
+        # 2) Bajar a Z_PICK
         if not self.move_to_xyz(x_m, y_m, z_pick_m):
             return False
         time.sleep(MOVE_WAIT_S)
 
-        # 3) Cerrar gripper (placeholder)
-        self.gripper_close()
+        # 3) Cerrar gripper
+        if not self.gripper_close():
+            self.get_logger().warning("No se pudo cerrar gripper (revisar calibración)")
         time.sleep(MOVE_WAIT_S)
 
-        # 4) Subir
+        # 4) Subir con la pieza
         if not self.move_to_xyz(x_m, y_m, Z_APPROACH_M):
             return False
         time.sleep(MOVE_WAIT_S)
 
-        # 5) Ir arriba del drop
-        if not self.move_to_xyz(drop_x, drop_y, max(drop_z, Z_APPROACH_M)):
+        # ============================================================
+        #  NUEVO: Waypoint intermedio -> HOME OPENCV
+        # ============================================================
+        if not self.go_home_opencv():
+            self.get_logger().warning("No se pudo ir a HOME_OPENCV (continuando igual)")
+        time.sleep(MOVE_WAIT_S)
+
+        
+        if shape_code == "s":
+            # acciones para square
+            self.move_motor(1, 842)
+        elif shape_code == "r":
+            # acciones para rectangle
+            self.move_motor(1, 213)
+        elif shape_code == "c":
+            self.move_motor(1, 430)
+        elif shape_code == "p":
+            self.move_motor(1, 598)
+        time.sleep(MOVE_WAIT_S)
+            
+        # 5) Ir arriba del drop (altura segura)
+        drop_approach_z = max(drop_z, Z_APPROACH_M)
+        if not self.move_to_xyz(drop_x, drop_y, drop_approach_z):
             return False
         time.sleep(MOVE_WAIT_S)
 
-        # 6) Bajar a drop_z
+        # 6) Bajar a drop_z y soltar
         if not self.move_to_xyz(drop_x, drop_y, drop_z):
             return False
         time.sleep(MOVE_WAIT_S)
 
-        # 7) Abrir gripper
-        self.gripper_open()
+        if not self.gripper_open():
+            self.get_logger().warning("No se pudo abrir gripper (revisar calibración)")
         time.sleep(MOVE_WAIT_S)
 
-        # 8) Retirar (subir)
-        self.move_to_xyz(drop_x, drop_y, max(drop_z, Z_APPROACH_M))
+        # 7) Subir luego de soltar
+        if not self.move_to_xyz(drop_x, drop_y, drop_approach_z):
+            return False
         time.sleep(MOVE_WAIT_S)
+
+        # ============================================================
+        #  NUEVO: Volver a HOME OPENCV al final
+        # ============================================================
+        if not self.go_home_opencv():
+            self.get_logger().warning("No se pudo volver a HOME_OPENCV al final")
+            # no lo marco como fallo fatal
 
         return True
+
 
 ######################################################
 
@@ -802,6 +867,7 @@ class PositionSignal(QWidget):
     changed = pyqtSignal(int, int)  # motor_id, position
 
 class ModernPincherGUI(QMainWindow):
+    routine_finished_sig = pyqtSignal(bool)
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
@@ -814,6 +880,11 @@ class ModernPincherGUI(QMainWindow):
         self.position_signal = PositionSignal()
         self.position_signal.changed.connect(self.on_position_changed)
         self.controller.position_changed = self.position_signal.changed
+
+        #Señal para ejecucuion de la rutina
+        self.routine_finished_sig.connect(self.on_routine_finished)
+
+
         
         self.init_ui()
 
@@ -1342,6 +1413,7 @@ class ModernPincherGUI(QMainWindow):
 
         self.btn_home_opencv = QPushButton("🏠 Home OpenCV")
         self.btn_home_opencv.clicked.connect(self.home_opencv)
+        self.btn_home_opencv.clicked.connect(self.controller.gripper_open)
         btn_row.addWidget(self.btn_home_opencv)
 
         self.btn_capture_opencv = QPushButton("📌 Capturar dato OpenCV (1 lectura)")
@@ -1391,7 +1463,7 @@ class ModernPincherGUI(QMainWindow):
         # =========================
         # Ejemplo futuro:
         # self.controller.move_to_angles_degrees(HOME_OPENCV_ANGLES_DEG)
-        self.controller.home_all_motors()
+        self.controller.go_home_opencv()
         self.status_label.setText("● HOME OpenCV (por ahora: HOME general)")
         QTimer.singleShot(2500, lambda: self.status_label.setText("● Sistema Listo"))
 
@@ -1444,29 +1516,28 @@ class ModernPincherGUI(QMainWindow):
         QTimer.singleShot(2500, lambda: self.status_label.setText("● Sistema Listo"))
 
     def run_saved_routine(self):
-        """
-        Ejecuta rutina usando la última medición guardada en controller.
-        NO vuelve a leer la cámara.
-        """
         if self.controller.last_opencv_measurement is None:
             QMessageBox.warning(self, "Rutina", "Primero captura el dato con 'Capturar dato OpenCV'.")
             return
 
         shape_code, x_m, y_m, z_m = self.controller.last_opencv_measurement
 
-        if shape_code not in DROP_POINTS:
-            QMessageBox.warning(self, "Rutina", f"No hay punto DROP configurado para '{shape_code}'.")
-            return
-
-        # Ejecutar en thread para no congelar GUI
         self.status_label.setText("● Ejecutando rutina...")
         self.btn_run_routine.setEnabled(False)
 
         def worker():
-            ok = self.controller.run_pick_place(shape_code, x_m, y_m, z_m)
-            QTimer.singleShot(0, lambda: self.on_routine_finished(ok))
+            ok = False
+            try:
+                ok = self.controller.run_pick_place(shape_code, x_m, y_m, z_m)
+            except Exception as e:
+                print("❌ Excepción en worker rutina:", e)
+                ok = False
+            finally:
+                # Esto SÍ llega al hilo GUI de forma segura
+                self.routine_finished_sig.emit(ok)
 
         threading.Thread(target=worker, daemon=True).start()
+
 
     def on_routine_finished(self, ok: bool):
         self.btn_run_routine.setEnabled(True)
