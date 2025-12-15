@@ -164,7 +164,9 @@ Diagrama tipo rqt_graph o equivalente, explicando tópicos/servicios/acciones y 
 Repositorio que incluya el workspace completo con todos los paquetes y scripts usadosRepositorio que incluya el workspace completo con todos los paquetes y scripts usados
 
 ## 13. Plano de planta
-
+<p align="center">
+  <img src="Imagenes/plano_planta.jpg" alt="Ejes" width="1000">
+</p>
 ## 14. Diagrama de flujo
 
 Diagrama de flujo escrito en Mermaid (idealmente embebido en el README o en un .md) mostrando la lógica general del sistema.
