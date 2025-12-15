@@ -2,6 +2,19 @@
 
 # Integrantes
 
+**Juan Ángel Vargas Rodríguez**
+juvargasro@unal.edu.co
+
+**Santiago Mariño Cortés**
+smarinoc@unal.edu.co
+
+**Juan José Delgado Estrada**
+judelgadoe@unal.edu.co
+
+**Samuel David Sánchez Cárdenas**
+
+**Santiago Ávila Corredor**
+
 ## Rutinas de las figuras
 
 ## Nodos
@@ -26,16 +39,16 @@ Explicación clara del pipeline (pasos, criterios y validación del resultado).
 
 Qué cámara usaron, cómo la conectaron/configuraron, problemas y solución (drivers/paquetes adicionales si aplicó).
 
-# Nodos y comunicación
+## Nodos y comunicación
 
 Diagrama tipo rqt_graph o equivalente, explicando tópicos/servicios/acciones y flujo de datos.
 
-# Repositorio
+## Repositorio
 
 Repositorio que incluya el workspace completo con todos los paquetes y scripts usadosRepositorio que incluya el workspace completo con todos los paquetes y scripts usados
 
-# Plano de planta
+## Plano de planta
 
-# Diagrama de flujo
+## Diagrama de flujo
 
 Diagrama de flujo escrito en Mermaid (idealmente embebido en el README o en un .md) mostrando la lógica general del sistema.
