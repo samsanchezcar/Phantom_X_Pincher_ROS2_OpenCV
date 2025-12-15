@@ -153,6 +153,8 @@ En la parte final se tienen las utilidaes pedidas en dónde se tienen diferentes
 
 ## 10. Funcionamiento
 
+La cámara que se usó para el laboratorio fue una cámara web HD C270 de la marca logitech de 720p y 30 FPS, tiene un campo visual de 55°, un micrófono con un alcance de 1.5 m, corrección de iluminación automática  y funciona en dispositivos con windows 8 o posteriores, macOS 10.10 o posteriores o chromeOS, se conecta mediante un Puerto USB-A. 
+
 Qué cámara usaron, cómo la conectaron/configuraron, problemas y solución (drivers/paquetes adicionales si aplicó).
 
 ## 11. Nodos y comunicación
@@ -164,9 +166,11 @@ Diagrama tipo rqt_graph o equivalente, explicando tópicos/servicios/acciones y 
 Repositorio que incluya el workspace completo con todos los paquetes y scripts usadosRepositorio que incluya el workspace completo con todos los paquetes y scripts usados
 
 ## 13. Plano de planta
+
 <p align="center">
   <img src="Imagenes/plano_planta.jpg" alt="Ejes" width="1000">
 </p>
+
 ## 14. Diagrama de flujo
 
 Diagrama de flujo escrito en Mermaid (idealmente embebido en el README o en un .md) mostrando la lógica general del sistema.
