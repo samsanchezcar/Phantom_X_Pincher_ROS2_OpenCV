@@ -12,8 +12,10 @@ smarinoc@unal.edu.co
 judelgadoe@unal.edu.co
 
 **Samuel David Sánchez Cárdenas**
+samsanchezca@unal.edu.co
 
 **Santiago Ávila Corredor**
+savilaco@unal.edu.co
 
 ## 1. Rutinas de las figuras
 
