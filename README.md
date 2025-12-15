@@ -25,7 +25,7 @@ Rutina que recoja cubo, cilindro, pentágono y rectángulo y los deposite en su 
 
 ## 3. Agregar canastilla y soporte/mástil de cámara en Xacro (visual + colisiones)
 
-La canastilla y el soporte/mástil se encuentran añadidos en [canastilla.stl](phantom_ws/src/phantomx_pincher_description/meshes/STL/canastilla.stl).
+La canastilla y el soporte/mástil se encuentran añadidos en [canastilla.stl](phantom_ws/src/phantomx_pincher_description/meshes/STL/canastilla.stl) y el soporte se ecnuentra en [ensambleSoporteCamara.stl](phantom_ws/src/phantomx_pincher_description/meshes/STL/ensambleSoporteCamara.stl)
 
 ## 4. Simulación de la rutina
 
