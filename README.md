@@ -180,8 +180,17 @@ Repositorio que incluya el workspace completo con todos los paquetes y scripts u
 
 ## 13. Plano de planta
 
+## Posición inicial
+El plano de la posición inicial se muestra a continuación y como ejemplo se tiene el cuadrado, la ubicación es independiente de la figura ya que siempre se deben poner en el centro del disco blanco.
+
 <p align="center">
-  <img src="Imagenes/plano_planta.jpg" alt="Ejes" width="1000">
+  <img src="Imagenes/plano_inicial.jpg" alt="Ejes" width="600">
+</p>
+
+## Posición final
+
+<p align="center">
+  <img src="Imagenes/plano_final.jpg" alt="Ejes" width="450">
 </p>
 
 ## 14. Diagrama de flujo
