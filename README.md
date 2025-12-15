@@ -153,8 +153,17 @@ En la parte final se tienen las utilidaes pedidas en dónde se tienen diferentes
 
 ## 10. Funcionamiento
 
-La cámara que se usó para el laboratorio fue una cámara web HD C270 de la marca logitech de 720p y 30 FPS, tiene un campo visual de 55°, un micrófono con un alcance de 1.5 m, corrección de iluminación automática  y funciona en dispositivos con windows 8 o posteriores, macOS 10.10 o posteriores o chromeOS, se conecta mediante un Puerto USB-A. 
+La cámara que se usó para el laboratorio fue una cámara web HD C270 de la marca logitech de 720p y 30 FPS, tiene un campo visual de 55°, un micrófono con un alcance de 1.5 m, corrección de iluminación automática  y funciona en dispositivos con windows 8 o posteriores, macOS 10.10 o posteriores o chromeOS, se conecta mediante un Puerto USB-A de la Raspberry pi que se usa . La configuración de cámara se realiza en el código de [OpenCV.py](phantom_ws/src/pincher_control/pincher_control/OpenCV.py) y principalmente mediante el uso de ``` cv2 ```
 
+Primero se incializa la cámara con ``` cap = cv2.VideoCapture(0) ```` y se le asigna a la cámara que vamos a usar el índice 0.
+
+```
+cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap.set(cv2.CAP_PROP_FPS, 30)
+```
+En estas líneas de código se realiza la configuración de la resolución que se va a trabajar, en este caso se usa una resolución de 640x480 con 30 FPS.
 <p align="center">
   <img src="Imagenes/camara.png" alt="Ejes" width="400">
 </p>
