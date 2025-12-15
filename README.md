@@ -155,6 +155,10 @@ En la parte final se tienen las utilidaes pedidas en dónde se tienen diferentes
 
 La cámara que se usó para el laboratorio fue una cámara web HD C270 de la marca logitech de 720p y 30 FPS, tiene un campo visual de 55°, un micrófono con un alcance de 1.5 m, corrección de iluminación automática  y funciona en dispositivos con windows 8 o posteriores, macOS 10.10 o posteriores o chromeOS, se conecta mediante un Puerto USB-A. 
 
+<p align="center">
+  <img src="Imagenes/camara.png" alt="Ejes" width="400">
+</p>
+
 Qué cámara usaron, cómo la conectaron/configuraron, problemas y solución (drivers/paquetes adicionales si aplicó).
 
 ## 11. Nodos y comunicación
