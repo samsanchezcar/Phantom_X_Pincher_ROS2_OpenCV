@@ -58,6 +58,16 @@ DROP_POINTS = {
     "p": (-0.2,  0.09, 0.02),  # <-- Pentagon -> Blue
 }
 
+def restricted_zone_name(x: float, y: float):
+    # Cuadrante 1
+    if (x > -0.075) :
+        return "Cuadrante 1"
+
+    # Cuadrante 2
+    if (x < -0.155) and (-0.025 <= y <= 0.025):
+        return "Cuadrante 2"
+
+    return None
 # ============================================================
 #  HOME OPENCV (WAYPOINT INTERMEDIO)
 # ============================================================
@@ -1533,6 +1543,18 @@ class ModernPincherGUI(QMainWindow):
             return
 
         shape_code, x_m, y_m, z_m = self.controller.last_opencv_measurement
+        zone = restricted_zone_name(x_m, y_m)
+        if zone is not None:
+            msg = (
+                f"Posición restringida ({zone}).\n"
+                f"x={x_m:.3f} m, y={y_m:.3f} m\n\n"
+                "La posición no puede ser alcanzada.\n"
+                "No se ejecutará la rutina de recogida."
+            )
+            QMessageBox.warning(self, "Zona restringida", msg)
+            self.status_label.setText("● Posición en zona restringida (rutina cancelada)")
+            QTimer.singleShot(3000, lambda: self.status_label.setText("● Sistema Listo"))
+            return
 
         self.status_label.setText("● Ejecutando rutina...")
         self.btn_run_routine.setEnabled(False)
