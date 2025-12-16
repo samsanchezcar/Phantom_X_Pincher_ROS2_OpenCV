@@ -1451,7 +1451,55 @@ class ModernPincherGUI(QMainWindow):
 
             self.last_frame = frame.copy()
 
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # =========================
+            # NUEVO: dibujar overlay
+            # =========================
+            frame_vis = frame.copy()
+
+            info = detectar_figuras_y_polares(frame_vis, debug=False)
+            best = pick_best_detection(info)
+
+            if best is not None:
+                shape_name = best["shape_name"]
+                conf = best["confidence"]
+                r_cm = best["r_cm"]
+                theta_deg = best["theta_deg"]
+
+                # (A) Si tu detector ya tiene estos campos (recomendado):
+                if "disk_cnt" in best:
+                    cv2.drawContours(frame_vis, [best["disk_cnt"]], -1, (0, 255, 255), 2)
+
+                if "cnt" in best:
+                    cv2.drawContours(frame_vis, [best["cnt"]], -1, (0, 255, 0), 2)
+
+                if "disk_center_px" in best:
+                    dcx, dcy = best["disk_center_px"]
+                    cv2.circle(frame_vis, (int(dcx), int(dcy)), 4, (0, 255, 255), -1)
+
+                if "center_px" in best:
+                    cx, cy = best["center_px"]
+                    cv2.circle(frame_vis, (int(cx), int(cy)), 4, (0, 0, 255), -1)
+
+                    if "disk_center_px" in best:
+                        cv2.line(frame_vis, (int(dcx), int(dcy)), (int(cx), int(cy)), (255, 0, 0), 2)
+
+                # (B) Mostrar texto con figura + posición (ya en coords robot)
+                x_cv, y_cv = polar_to_cartesian_m(r_cm, theta_deg, offset_x_m=0.0, offset_y_m=0.0)
+                x_robot, y_robot = y_cv, x_cv
+                y_robot = -y_robot
+                x_m = x_robot + OPENCV_OFFSET_X_M
+                y_m = y_robot + OPENCV_OFFSET_Y_M
+
+                txt1 = f"{shape_name} ({shape_name_to_code(shape_name)})  conf={conf:.0%}"
+                txt2 = f"r={r_cm:.1f}cm  th={theta_deg:.1f}deg"
+                txt3 = f"x={x_m:.3f}m  y={y_m:.3f}m"
+
+                cv2.putText(frame_vis, txt1, (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+                cv2.putText(frame_vis, txt2, (15, 55), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+                cv2.putText(frame_vis, txt3, (15, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+
+            # Render en Qt
+            rgb = cv2.cvtColor(frame_vis, cv2.COLOR_BGR2RGB)
             h, w, ch = rgb.shape
             bytes_per_line = ch * w
             qimg = QImage(rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
@@ -1460,8 +1508,10 @@ class ModernPincherGUI(QMainWindow):
             self.camera_label.setPixmap(
                 pix.scaled(self.camera_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             )
+
         except Exception as e:
             self.camera_label.setText(f"❌ Error cámara: {e}")
+
 
     def home_opencv(self):
         """

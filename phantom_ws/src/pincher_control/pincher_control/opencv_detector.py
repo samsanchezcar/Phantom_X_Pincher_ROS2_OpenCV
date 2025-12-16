@@ -258,6 +258,12 @@ def detectar_figuras_y_polares(frame, debug=False):
     cx_disk = x0 + xc_roi
     cy_disk = y0 + yc_roi
 
+    # ---- NUEVO: contorno del disco en coordenadas FULL imagen ----
+    cnt_disk_full = cnt_disk.copy()
+    cnt_disk_full[:, 0, 0] += x0
+    cnt_disk_full[:, 0, 1] += y0
+
+
     # 2) máscara disco + máscara naranja
     mask_disk = np.zeros_like(gray, dtype=np.uint8)
     cv2.circle(mask_disk, (int(cx_disk), int(cy_disk)), int(R_pix * 0.9), 255, -1)
@@ -281,9 +287,12 @@ def detectar_figuras_y_polares(frame, debug=False):
     result = {
         "disk_center": (cx_disk, cy_disk),
         "disk_radius": R_pix,
+        "disk_cnt": cnt_disk_full,              # NUEVO
+        "disk_center_px": (cx_disk, cy_disk),   # NUEVO (igual que disk_center)
         "shapes": [],
         "mask_debug": mask_orange if debug else None,
     }
+
 
     if not contours_obj:
         return result
@@ -313,6 +322,7 @@ def detectar_figuras_y_polares(frame, debug=False):
         dx = cx_obj - cx_disk
         dy = cy_obj - cy_disk
 
+
         r_pix = math.hypot(dx, dy)
         r_cm = r_pix * scale
 
@@ -323,14 +333,17 @@ def detectar_figuras_y_polares(frame, debug=False):
 
         result["shapes"].append(
             {
-                "shape_name": shape_name,
-                "confidence": confidence,
-                "r_cm": r_cm,
-                "theta_deg": theta_deg,
-                "obj_center": (cx_obj, cy_obj),
-                "features": features,
+            "shape_name": shape_name,
+            "confidence": confidence,
+            "r_cm": r_cm,
+            "theta_deg": theta_deg,
+            "obj_center": (cx_obj, cy_obj),
+            "center_px": (cx_obj, cy_obj),  # NUEVO
+            "cnt": cnt,                     # NUEVO (contorno de la figura)
+            "features": features,
             }
         )
+
 
     result["shapes"].sort(key=lambda s: s["shape_name"])
     return result
