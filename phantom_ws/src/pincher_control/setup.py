@@ -31,6 +31,7 @@ setup(
             'template_control_servo = pincher_control.template_control_servo:main',
             'control_servo = pincher_control.control_servo:main',
             'control_servo2 = pincher_control.control_servo2:main',
+            'opencv_detector = pincher_control.opencv_detector:main',
             'L5_P1 = pincher_control.LAB5_P1 :main',
             'OpenCV = pincher_control.OpenCV :main',
             'terminal_sub = pincher_control.terminal_subscriber :main',
