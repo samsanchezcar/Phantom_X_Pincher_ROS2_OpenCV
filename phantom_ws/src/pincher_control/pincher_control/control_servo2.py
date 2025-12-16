@@ -60,7 +60,7 @@ DROP_POINTS = {
 
 def restricted_zone_name(x: float, y: float):
     # Cuadrante 1
-    if (x > -0.075) :
+    if (x > -0.075):
         return "Cuadrante 1"
 
     # Cuadrante 2
@@ -1667,8 +1667,8 @@ class ModernPincherGUI(QMainWindow):
         name1.setObjectName("sectionTitle")
         layout1.addWidget(name1)
         
-        info1 = QLabel("📚 Ingeniería Mecatrónica\n☕ Café Lover\n🤖 Solo Robótica\n⏰ Veremos si acaba primero el semestre o el semestre acaba conmigo\n\n🔗 GitHub: samsanchezcar")
-        info1.setStyleSheet("color: #e0e0e0; line-height: 1.6; padding: 10px;")
+        info1 = QLabel("⏰ Veremos si acaba primero el semestre o el semestre acaba conmigo\n🔗 GitHub: samsanchezcar")
+        info1.setStyleSheet("color: #e0e0e0; line-height: 1; padding: 8px;")
         layout1.addWidget(info1)
         
         scroll_layout.addWidget(card1)
@@ -1681,11 +1681,53 @@ class ModernPincherGUI(QMainWindow):
         name2.setObjectName("sectionTitle")
         layout2.addWidget(name2)
         
-        info2 = QLabel("😵 El semestre me está matando\n🙏 Pronto todo acabará\n\n🔗 GitHub: Santiago-Avila")
-        info2.setStyleSheet("color: #e0e0e0; line-height: 1.6; padding: 10px;")
+        info2 = QLabel("🙏 Pronto todo acabará\n🔗 GitHub: Santiago-Avila")
+        info2.setStyleSheet("color: #e0e0e0; line-height: 1; padding: 8px;")
         layout2.addWidget(info2)
         
         scroll_layout.addWidget(card2)
+
+        card3 = QFrame()
+        card3.setObjectName("card")
+        layout3 = QVBoxLayout(card3)
+        
+        name3 = QLabel("Santiago Mariño Cortés")
+        name3.setObjectName("sectionTitle")
+        layout3.addWidget(name3)
+        
+        info3 = QLabel("🙊 Don't believe the hype\n🔗 GitHub: mrbrightside8")
+        info3.setStyleSheet("color: #e0e0e0; line-height: 1; padding: 8px;")
+        layout3.addWidget(info3)
+        
+        scroll_layout.addWidget(card3)
+
+        card4 = QFrame()
+        card4.setObjectName("card")
+        layout4 = QVBoxLayout(card4)
+        
+        name4 = QLabel("Juan Angel Vargas Rodríguez")
+        name4.setObjectName("sectionTitle")
+        layout4.addWidget(name4)
+        
+        info4 = QLabel("🙏 Agradecido con el de arriba\n🔗 GitHub: juvargasro")
+        info4.setStyleSheet("color: #e0e0e0; line-height: 1; padding: 8px;")
+        layout4.addWidget(info4)
+        
+        scroll_layout.addWidget(card4)
+
+        card5 = QFrame()
+        card5.setObjectName("card")
+        layout5 = QVBoxLayout(card5)
+        
+        name5 = QLabel("Juan José Delgado Estrada")
+        name5.setObjectName("sectionTitle")
+        layout5.addWidget(name5)
+        
+        info5 = QLabel("🤖 Mi propósito es tener un robot que me hagas el aseo\n🔗 GitHub: Juan-delgado1")
+        info5.setStyleSheet("color: #e0e0e0; line-height: 1; padding: 8px;")
+        layout5.addWidget(info5)
+        
+        scroll_layout.addWidget(card5)
         
         scroll_layout.addStretch()
         scroll.setWidget(scroll_widget)
