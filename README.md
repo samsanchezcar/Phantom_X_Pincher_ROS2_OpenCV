@@ -1435,19 +1435,6 @@ Las contribuciones son bienvenidas. Por favor:
 
 ---
 
-## 📧 Contacto
-
-**Samuel David Sánchez Cárdenas** (Autor Principal)  
-📧 Email: samsanchezca@unal.edu.co  
-🔗 GitHub: [@samsanchezcar](https://github.com/samsanchezcar)
-
-**Equipo de Desarrollo:**
-- Juan Ángel Vargas Rodríguez - juvargasro@unal.edu.co
-- Santiago Mariño Cortés - smarinoc@unal.edu.co
-- Juan José Delgado Estrada - judelgadoe@unal.edu.co
-- Santiago Ávila Corredor - savilaco@unal.edu.co
-
----
 
 <div align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer&text=Universidad%20Nacional%20de%20Colombia%20%E2%80%A2%202025&fontSize=18&animation=fadeIn" width="100%" />
