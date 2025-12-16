@@ -54,8 +54,8 @@ Z_APPROACH_M = Z_PICK_M + 0.05   # altura de aproximación (recomendado)
 DROP_POINTS = {
     "s": (0.0,  -0.13, 0.02),  # <-- Square -> Red
     "r": (0.0, 0.13, 0.02),  # <-- Rectangle -> Yellow
-    "c": (-0.2,  0.09, 0.02),  # <-- Circle ->  Green
-    "p": (-0.2,  -0.09, 0.02),  # <-- Pentagon -> Blue
+    "c": (-0.2,  -0.09, 0.02),  # <-- Circle ->  Green
+    "p": (-0.2,  0.09, 0.02),  # <-- Pentagon -> Blue
 }
 
 # ============================================================
@@ -75,7 +75,7 @@ GRIPPER_OPEN_DEG = 0.0     # <-- CAMBIAR AQUÍ
 GRIPPER_CLOSE_DEG = 70.0   # <-- CAMBIAR AQUÍ
 
 # Esperas entre movimientos (seg)
-MOVE_WAIT_S = 1.5          # <-- si tu robot tarda más, súbelo
+MOVE_WAIT_S = 1         # <-- si tu robot tarda más, súbelo
 
 ######################################################
 L1 = 44.0  / 1000.0
@@ -813,9 +813,9 @@ class PincherController(Node):
             # acciones para rectangle
             self.move_motor(1, 213)
         elif shape_code == "c":
-            self.move_motor(1, 430)
-        elif shape_code == "p":
             self.move_motor(1, 598)
+        elif shape_code == "p":
+            self.move_motor(1, 430)
         time.sleep(MOVE_WAIT_S)
             
         # 5) Ir arriba del drop (altura segura)
@@ -1496,13 +1496,25 @@ class ModernPincherGUI(QMainWindow):
         # =========================
         # CAMBIAR AQUÍ si quieres otro mapeo/transformación
         # =========================
-        x_m, y_m = polar_to_cartesian_m(
+        # 1) Polar -> cartesiano (SIN offset)
+        x_cv, y_cv = polar_to_cartesian_m(
             r_cm, theta_deg,
-            offset_x_m=OPENCV_OFFSET_X_M,  # <-- offset X
-            offset_y_m=OPENCV_OFFSET_Y_M,  # <-- offset Y
+            offset_x_m=0.0,
+            offset_y_m=0.0,
         )
 
-        z_m = Z_PICK_M  # <-- Z fijo para pick (por ahora 0)
+        # 2) Swap (porque estaban cruzados)
+        x_robot, y_robot = y_cv, x_cv
+
+        # 3) Invertir eje Y del robot
+        y_robot = -y_robot
+
+        # 4) Offsets en el marco del robot
+        x_m = x_robot + OPENCV_OFFSET_X_M
+        y_m = y_robot + OPENCV_OFFSET_Y_M
+
+        z_m = Z_PICK_M
+
 
         # Guardar + publicar por tópicos DESDE el mismo nodo (PincherController)
         self.controller.publish_opencv_measurement(shape_code, x_m, y_m, z_m)
@@ -1879,22 +1891,39 @@ class ModernPincherGUI(QMainWindow):
     def launch_rviz(self):
         try:
             cmd = ["ros2", "launch", "phantomx_pincher_description", "display.launch.py"]
-            
+
+            # ------------------------------------------------------------
+            # FIX: limpiar variables Qt que OpenCV (pip) suele inyectar
+            # y que hacen que RViz busque plugins en cv2/qt/plugins.
+            # ------------------------------------------------------------
+            clean_env = os.environ.copy()
+            for k in [
+                "QT_QPA_PLATFORM_PLUGIN_PATH",
+                "QT_PLUGIN_PATH",
+                "QT_QPA_PLATFORMTHEME",
+                "QT_DEBUG_PLUGINS",
+            ]:
+                clean_env.pop(k, None)
+
             def run_rviz():
-                self.rviz_process = subprocess.Popen(cmd)
+                # Nota: env=clean_env es la clave del arreglo
+                self.rviz_process = subprocess.Popen(cmd, env=clean_env)
                 self.rviz_process.wait()
                 QTimer.singleShot(0, self.on_rviz_closed)
-            
+
             thread = threading.Thread(target=run_rviz, daemon=True)
             thread.start()
-            
+
             self.rviz_btn.setEnabled(False)
             self.stop_rviz_btn.setEnabled(True)
             self.rviz_status_label.setText("● RViz ejecutándose")
-            self.rviz_status_label.setStyleSheet("color: #00d9ff; font-weight: bold; padding: 15px; font-size: 12pt;")
-        
+            self.rviz_status_label.setStyleSheet(
+                "color: #00d9ff; font-weight: bold; padding: 15px; font-size: 12pt;"
+            )
+
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo lanzar RViz: {str(e)}")
+
     
     def stop_rviz(self):
         if self.rviz_process:
