@@ -175,7 +175,7 @@ Qué cámara usaron, cómo la conectaron/configuraron, problemas y solución (dr
 Diagrama tipo rqt_graph o equivalente, explicando tópicos/servicios/acciones y flujo de datos.
 
 <p align="center">
-  <img src="Imagenes/rosgraph.png" alt="Ejes" width="900">
+  <img src="Imagenes/rosgraph_complete.png" alt="Ejes" width="900">
 </p>
 
 En el diagrama se visualizan 3 Nodos que son ``` /pincher_controller ``` que se usa para controlar los motores de las articulaciones del manipulador y de igual forma la lectura de posiciones mediante los encoders, este nodo publica en el tópico de ``` /joint_states ``` . ``` /robot_state_publisher ``` es otro nodo y se encarga de todo lo relacionado con la cinemática directa del robot, por lo que se usa también para las transformaciones de marcos de referencia; se encarga de publicar y lo hace en ``` \tf ```. Finalmente se tiene el ``` transform_listener ``` guarda las transformaciones que realiza el robot, para poder consultar posteriormente las distintas poses del robot, se trata de un nodo que solo escucha lo que se publica en  ``` \tf ``` .
