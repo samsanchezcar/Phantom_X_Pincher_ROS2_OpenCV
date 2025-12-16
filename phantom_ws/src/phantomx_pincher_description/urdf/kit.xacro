@@ -250,7 +250,7 @@
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl"
               scale="0.001 0.001 0.001" />
       </geometry>
-      <material name="green" />
+      <material name="blue" />
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 ${PI*((180-25.5)/180)}" />
@@ -258,7 +258,7 @@
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl"
               scale="0.001 0.001 0.001" />
       </geometry>
-      <material name="green" />
+      <material name="blue" />
     </collision>
   </link>
 
@@ -275,7 +275,7 @@
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl"
               scale="0.001 0.001 0.001" />
       </geometry>
-      <material name="blue" />
+      <material name="green" />
     </visual>
 
     <collision>
@@ -284,7 +284,7 @@
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl"
               scale="0.001 0.001 0.001" />
       </geometry>
-      <material name="blue" />
+      <material name="green" />
     </collision>
 
   </link>
