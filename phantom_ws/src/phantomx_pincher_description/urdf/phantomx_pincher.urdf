@@ -33,6 +33,10 @@
     <color rgba="0.5 0 0.5 1"/>
   </material>
   <!-- ============================= -->
+  <!-- 📦 Extra STL: canastilla y soporte cámara -->
+  <!-- ============================= -->
+  <!-- grosor paredes (2cm) -->
+  <!-- ============================= -->
   <!-- 🧱 Robot Geometry -->
   <!-- ============================= -->
   <link name="baseFija_link">
@@ -204,14 +208,14 @@
       <geometry>
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="green"/>
+      <material name="blue"/>
     </visual>
     <collision>
       <origin rpy="0 0 2.696533694331239" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="green"/>
+      <material name="blue"/>
     </collision>
   </link>
   <joint name="base_canecaFrontalDerecha_joint" type="fixed">
@@ -225,20 +229,85 @@
       <geometry>
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="blue"/>
+      <material name="green"/>
     </visual>
     <collision>
       <origin rpy="0 0 3.586651612848347" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://phantomx_pincher_description/meshes/STL/canecaGrande.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="blue"/>
+      <material name="green"/>
     </collision>
   </link>
   <joint name="base_canecaFrontalIzquierda_joint" type="fixed">
     <parent link="baseFija_link"/>
     <child link="canecaFrontalIzquierda_link"/>
     <origin rpy="0 0 0" xyz="0.19397558339 0.09252160722 0.016"/>
+  </joint>
+  <!-- SLT nuevos -->
+  <link name="canastilla_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://phantomx_pincher_description/meshes/STL/canastilla.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <!-- Colisión: 4 paredes externas -->
+    <!-- Pared frontal (+Y) -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0.19 0.09275"/>
+      <geometry>
+        <box size="0.6 0.02 0.1855"/>
+      </geometry>
+    </collision>
+    <!-- Pared trasera (-Y) -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0 -0.19 0.09275"/>
+      <geometry>
+        <box size="0.6 0.02 0.1855"/>
+      </geometry>
+    </collision>
+    <!-- Pared derecha (+X) -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0.29 0 0.09275"/>
+      <geometry>
+        <box size="0.02 0.36000000000000004 0.1855"/>
+      </geometry>
+    </collision>
+    <!-- Pared izquierda (-X) -->
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.29 0 0.09275"/>
+      <geometry>
+        <box size="0.02 0.36000000000000004 0.1855"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_canastilla_joint" type="fixed">
+    <parent link="baseFija_link"/>
+    <child link="canastilla_link"/>
+    <origin rpy="0 0 0" xyz="0.155 0 -0.0145"/>
+  </joint>
+  <link name="ensambleSoporteCamara_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://phantomx_pincher_description/meshes/STL/ensambleSoporteCamara.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+    <!-- Colisión simplificada -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.15"/>
+      <geometry>
+        <box size="0.04 0.04 0.30"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_ensambleSoporteCamara_joint" type="fixed">
+    <parent link="baseFija_link"/>
+    <child link="ensambleSoporteCamara_link"/>
+    <origin rpy="0 0 -1.5707963267948966" xyz="0.26 0 0.00"/>
   </joint>
   <!-- ============================= -->
   <!-- 🌍 Global Rotation Wrapper -->
