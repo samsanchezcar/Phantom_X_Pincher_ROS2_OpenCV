@@ -478,6 +478,15 @@ Phantom_X_Pincher_ROS2_OpenCV/
 
 ## 👁️ Sistema de Visión OpenCV
 
+### Descripción General
+
+El sistema de visión artificial detecta figuras geométricas de color naranja colocadas sobre un disco blanco de referencia. Utiliza múltiples características geométricas invariantes a rotación para clasificar las formas con alta precisión.
+
+<div align="center">
+  <img src="./sources/DeteccionFiguras_1.png" alt="Detección de Figuras" width="600" />
+  <p><em>Sistema de detección de figuras geométricas con OpenCV</em></p>
+</div>
+
 ### Nodo opencv_detector
 
 **Tipo:** Publisher Node  
@@ -902,6 +911,42 @@ ros2 run pincher_control opencv_detector --ros-args -p camera_index:=1
 # Cambiar frecuencia de publicación (default: 10 Hz)
 ros2 run pincher_control opencv_detector --ros-args -p publish_rate:=30.0
 ```
+
+
+### Detección de Formas Específicas
+
+<div align="center">
+<table>
+<tr>
+<td align="center">
+<img src="./sources/DetectionCircle.png" alt="Círculo" width="200"/><br/>
+<b>Círculo</b><br/>
+Circularidad > 0.88<br/>
+6+ vértices
+</td>
+<td align="center">
+<img src="./sources/DetectionSquare.png" alt="Cuadrado" width="200"/><br/>
+<b>Cuadrado</b><br/>
+4 vértices<br/>
+Aspect Ratio ≈ 1.0
+</td>
+</tr>
+<tr>
+<td align="center">
+<img src="./sources/DetectionRectangle.png" alt="Rectángulo" width="200"/><br/>
+<b>Rectángulo</b><br/>
+4 vértices<br/>
+Aspect Ratio ≠ 1.0
+</td>
+<td align="center">
+<img src="./sources/DetectionPentagon.png" alt="Pentágono" width="200"/><br/>
+<b>Pentágono</b><br/>
+5 vértices<br/>
+Circularidad ≈ 0.865
+</td>
+</tr>
+</table>
+</div>
 
 ---
 
@@ -1366,6 +1411,21 @@ class ModernPincherGUI(QMainWindow):
     8. ⚙️ Configuración - Parámetros del sistema
     """
 ```
+### Páginas de la GUI
+
+<div align="center">
+
+| Página | Descripción | Imagen |
+|:------:|:------------|:------:|
+| **Dashboard** | Estado general, posición XYZ, velocidad global | ![Dashboard](./sources/gui/gui_main.png) |
+| **Manual Control** | Sliders para control individual de cada motor | ![Manual](./sources/gui/gui_manual_control.png) |
+| **Fixed Values** | Entrada numérica para posiciones precisas | ![Fixed](./sources/gui/gui_fix_value.png) |
+| **Fixed Angles** | 5 posiciones predefinidas con un click | ![Angles](./sources/gui/gui_pose.png) |
+| **XYZ Control** | Control cartesiano con cinemática inversa | ![XYZ](./sources/gui/gui_xyz_control.png) |
+| **OpenCV** | Vista de cámara, detección y Pick & Place | ![OpenCV](./sources/gui/gui_opencv.jpeg) |
+| **Visualization** | Lanzar RViz2 y Robotics Toolbox | ![Viz](./sources/gui/gui_visualization.png) |
+
+</div>
 
 ### Pestaña OpenCV (Clave)
 
